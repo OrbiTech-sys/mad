@@ -1,0 +1,297 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   MAD — Mighty & Delicious · design tokens
+   Every colour and font used in the UI is declared here and referenced by name.
+   ========================================================================== */
+
+@theme {
+  /* Brand palette (supplied) */
+  --color-ink: #171615; /* primary background */
+  --color-coal: #211f1d; /* secondary background */
+  --color-ember: #e65c25; /* primary accent */
+  --color-gold: #f3b64b; /* highlight */
+  --color-cream: #f5f0e8; /* light sections */
+  --color-paper: #f7f5f1; /* primary text on dark */
+  --color-smoke: #a8a29e; /* secondary text on dark */
+
+  /* Derived tones (kept in the same family; contrast-checked) */
+  --color-char: #2b2825; /* raised surface on dark */
+  --color-ember-deep: #b9440f; /* orange text that must pass AA on cream */
+  --color-cream-deep: #ebe3d5; /* alternate light surface */
+  --color-bone: #fbf8f2; /* cards on cream */
+  --color-ash: #5f5953; /* secondary text on cream */
+  --color-danger: #ff8f7e; /* errors on dark */
+  --color-danger-deep: #b3261e; /* errors on light */
+  --color-leaf: #7fd69a; /* positive state on dark */
+  --color-leaf-deep: #1d6b3a; /* positive state on light */
+
+  --font-display: var(--font-bebas), "Oswald", "Arial Narrow", Impact, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --shadow-lift: 0 22px 44px -22px rgb(0 0 0 / 0.55);
+  --shadow-card: 0 1px 0 rgb(23 22 21 / 0.04), 0 14px 30px -20px rgb(23 22 21 / 0.35);
+
+  --breakpoint-xs: 26rem;
+}
+
+/* ---------------------------------------------------------------- base --- */
+
+:root {
+  --focus: var(--color-gold);
+  color-scheme: dark;
+}
+
+[data-surface="dark"] {
+  --focus: var(--color-gold);
+}
+
+[data-surface="light"] {
+  --focus: var(--color-ink);
+  color-scheme: light;
+}
+
+html {
+  /* `clip`, never `hidden`: hidden would turn <body> into a scroll container and break sticky. */
+  overflow-x: clip;
+  scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem;
+  scrollbar-gutter: stable;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: clip;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-ember);
+  color: var(--color-ink);
+}
+
+/* In @layer base so utility classes (e.g. outline-none on programmatically focused containers) can override it. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ------------------------------------------------------------- utilities -- */
+
+@utility display-hero {
+  font-family: var(--font-display);
+  font-size: clamp(3.4rem, 14.5vw, 8.5rem);
+  line-height: 0.84;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+  min-width: 0;
+  @media (min-width: 64rem) {
+    font-size: clamp(5rem, 9.2vw, 9.25rem);
+  }
+}
+
+@utility display-xl {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 9vw, 7.25rem);
+  line-height: 0.9;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+@utility display-lg {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  line-height: 0.94;
+  letter-spacing: 0.015em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+@utility display-md {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3.4vw, 2.5rem);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+/* Subtle film grain, used on a few hero-scale surfaces only (not full-page: it would cost paint). */
+@utility grain {
+  position: relative;
+  isolation: isolate;
+}
+@utility grain-layer {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.07;
+  mix-blend-mode: screen;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* Safe-area aware bottom padding for the sticky mobile order bar. */
+@utility pb-safe {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+
+/* ------------------------------------------------------------- keyframes -- */
+
+@keyframes marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+@keyframes shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 38s linear infinite;
+  will-change: transform;
+}
+.animate-spin-slow {
+  animation: spin-slow 28s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgb(247 245 241 / 0.07), transparent);
+  animation: shimmer 1.6s infinite;
+}
+
+/* ------------------------------------------------------ range / scrollbars -- */
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ------------------------------------------------------------------ map --- */
+
+.leaflet-container {
+  font-family: var(--font-sans);
+  background: var(--color-coal);
+  outline-offset: 0;
+}
+.leaflet-container a {
+  color: var(--color-ember-deep);
+}
+.leaflet-tile-pane {
+  filter: grayscale(0.35) contrast(1.02) brightness(0.96);
+}
+.leaflet-control-attribution {
+  font-size: 10px !important;
+  background: rgb(23 22 21 / 0.72) !important;
+  color: var(--color-smoke) !important;
+}
+.leaflet-control-attribution a {
+  color: var(--color-paper) !important;
+}
+.leaflet-bar a {
+  width: 36px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+  background: var(--color-ink) !important;
+  color: var(--color-paper) !important;
+  border-color: rgb(247 245 241 / 0.16) !important;
+}
+.leaflet-bar a:hover {
+  background: var(--color-char) !important;
+}
+
+.mad-pin {
+  position: relative;
+  width: 34px;
+  height: 34px;
+}
+.mad-pin__body {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  background: var(--color-ember);
+  border: 2px solid var(--color-ink);
+  box-shadow: 0 6px 14px -4px rgb(0 0 0 / 0.6);
+}
+.mad-pin__label {
+  transform: rotate(45deg);
+  font-family: var(--font-display);
+  font-size: 15px;
+  line-height: 1;
+  color: var(--color-ink);
+}
+.mad-pin--you .mad-pin__body {
+  background: var(--color-gold);
+}
+.mad-pin--dim .mad-pin__body {
+  background: var(--color-smoke);
+}
+.mad-you-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--color-gold);
+  border: 3px solid var(--color-ink);
+  box-shadow: 0 0 0 2px var(--color-gold);
+}
